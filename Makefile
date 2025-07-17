@@ -1,7 +1,7 @@
 CC = C:/msys64/mingw64/bin/gcc.exe
 CXX = C:/msys64/mingw64/bin/g++.exe
-CFLAGS = -Iinclude -Wall -Wextra -std=c11 -g
-CXXFLAGS = -Iinclude -Wall -Wextra -std=c++11 -g -Wno-shadow -Wno-unused-parameter
+CFLAGS = -Iinclude -I/mingw64/include -Wall -Wextra -std=c11 -g
+CXXFLAGS = -Iinclude -I/mingw64/include -Wall -Wextra -std=c++11 -g -Wno-shadow -Wno-unused-parameter
 
 BIN_DIR := bin
 SRC_DIR := source
@@ -51,7 +51,13 @@ simple_test: $(SRC_DIR)/simple_test.c $(CORE_SOURCES)
 
 # Clean target
 clean:
-	del /Q $(BIN_DIR)\*.exe 2>NUL || true
-	del /Q $(SRC_DIR)\*.o 2>NUL || true
-
+ifeq ($(OS),Windows_NT)
+	@echo "Cleaning (Windows)..."
+	@del /Q $(BIN_DIR)\*.exe 2>NUL || echo "No executables to delete"
+	@del /Q $(SRC_DIR)\*.o 2>NUL || echo "No object files to delete"
+else
+	@echo "Cleaning (Unix)..."
+	@rm -f $(BIN_DIR)/*.exe
+	@rm -f $(SRC_DIR)/*.o
+endif
 .PHONY: all clean core_library tools debug_init simple_test 
